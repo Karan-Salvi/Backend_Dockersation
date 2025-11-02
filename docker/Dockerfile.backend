@@ -1,18 +1,25 @@
-FROM oven/bun:1
+FROM oven/bun:1.1.22-alpine AS base
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY ./packages ./packages
-COPY ./bun.lock ./bun.lock
+# Define build argument
+ARG DATABASE_URL
 
-COPY ./package.json ./package.json
-COPY ./turbo.json ./turbo.json
-
-COPY ./apps/backend ./apps/backend
+# Copy package files first for better caching
+COPY package.json bun.lock ./
+COPY packages/db/package.json ./packages/db/
+COPY packages/backend/package.json ./packages/backend/
 
 RUN bun install
-RUN bun run db:generate
+
+# Copy the rest
+COPY ./packages ./packages
+COPY ./turbo.json ./
+COPY ./apps/backend ./apps/backend
+
+# Use the build argument during db:generate
+RUN DATABASE_URL=${DATABASE_URL} bun run db:generate
 
 EXPOSE 8080
 
-CMD ["bun", "run", "start:backend"]
+CMD [ "bun","run","start:backend" ]
