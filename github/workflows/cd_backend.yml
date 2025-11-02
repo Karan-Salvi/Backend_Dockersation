@@ -1,17 +1,14 @@
-## Build docker images 
-## Push the docker images to dockerhub
-## SSH into our VM and start the new Image
+name: Deploy the backend
 
-name: Deploy the backend 
 on:
-  push: 
-    branches: [ main ]
+  push:
+    branches: [main]
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the Code 
+      - name: Checkout the Code
         uses: actions/checkout@v2
 
       - name: Docker login
@@ -27,6 +24,3 @@ jobs:
           file: ./docker/Dockerfile.backend
           push: true
           tags: Karan-Salvi/todo-app-backend:${{github.sha}}
-
-          ## step 3 Deploy the backend at VM
-          
