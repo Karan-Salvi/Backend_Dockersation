@@ -5,17 +5,9 @@ WORKDIR /app
 # Define build argument
 ARG DATABASE_URL
 
-# Copy package files first for better caching
-COPY package.json bun.lock ./
-COPY packages/db/package.json ./packages/db/
-COPY packages/backend/package.json ./packages/backend/
+COPY . .
 
 RUN bun install
-
-# Copy the rest
-COPY ./packages ./packages
-COPY ./turbo.json ./
-COPY ./apps/backend ./apps/backend
 
 # Use the build argument during db:generate
 RUN DATABASE_URL=${DATABASE_URL} bun run db:generate
