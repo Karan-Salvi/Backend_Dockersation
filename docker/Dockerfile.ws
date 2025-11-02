@@ -1,4 +1,4 @@
-FROM oven/bun:1.1.22-alpine AS base
+FROM oven/bun:1
 
 WORKDIR /app
 
@@ -12,6 +12,6 @@ RUN bun install
 # Use the build argument during db:generate
 RUN DATABASE_URL=${DATABASE_URL} bun run db:generate
 
-EXPOSE 8080
+EXPOSE 3001
 
 CMD [ "bun","run","start:ws" ]
