@@ -26,3 +26,9 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/todo-app-backend:${{github.sha}}
           build-args: |
             DATABASE_URL=${{ secrets.DATABASE_URL }}
+
+      - name: Deploy to VM
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key
+          chmod 700 /home/runner/ssh_key
+          ssh -o StrictHostKeyChecking=no -i ~/ssh_key root@172.17.0.2 -t "docker stop user_backend && docker run --name user_backend -d -e DATABASE_URL=${{ secrets.DATABASE_URL }} -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/todo-app-backend:${{ github.sha }}"
